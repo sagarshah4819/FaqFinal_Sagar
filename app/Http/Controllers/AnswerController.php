@@ -24,9 +24,12 @@ class AnswerController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($question)
     {
         //
+        $answer = new Answer;
+        $edit = FALSE;
+        return view('answerForm', ['answer' => $answer,'edit' => $edit, 'question' =>$question  ]);
     }
     /**
      * Store a newly created resource in storage.
@@ -34,9 +37,22 @@ class AnswerController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, $question)
     {
         //
+        $input = $request->validate([
+            'body' => 'required|min:5',
+        ], [
+            'body.required' => 'Body is required',
+            'body.min' => 'Body must be at least 5 characters',
+        ]);
+        $input = request()->all();
+        $question = Question::find($question);
+        $Answer = new Answer($input);
+        $Answer->user()->associate(Auth::user());
+        $Answer->question()->associate($question);
+        $Answer->save();
+        return redirect()->route('question.show',['question_id' => $question->id])->with('message', 'Saved');
     }
     /**
      * Display the specified resource.
