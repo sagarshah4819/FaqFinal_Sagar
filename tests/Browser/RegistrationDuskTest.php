@@ -1,10 +1,9 @@
 <?php
-
 namespace Tests\Browser;
-
 use Tests\DuskTestCase;
 use Laravel\Dusk\Browser;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use App\User;
 
 class RegistrationDuskTest extends DuskTestCase
 {
@@ -20,21 +19,23 @@ class RegistrationDuskTest extends DuskTestCase
                 ->assertTitle('Laravel')
                 ->clickLink('Register')
                 ->assertSee('Register')
-                ->type('#email', 'sagarshah4819@gmail.com')
-                ->type('#password', '123456')
-                ->type('#password-confirm', '123456')
-                ->press('button[type="submit"]');
-        });
-
-        $this->browse(function (Browser $browser) {
-            $browser->visit('/login')
-                ->value('#email', 'sagarshah4819@gmail.com')
-                ->value('#password', '123456')
-                ->press('button[type="submit"]')
-                ->assertSee('Questions')
-                ->press('#navbarDropdown')
+                ->type('email', 'ss3958@njit.edu')
+                ->type('password', '123456')
+                ->type('password_confirmation', '123456')
+                ->click('button[type="submit"]')
+                ->click('#navbarDropdown')
                 ->clickLink('Logout')
                 ->assertSee('Laravel');
         });
+       $this->browse(function (Browser $browser) {
+        $browser->visit('/login')
+                ->type('email', 'ss3958@njit.edu')
+                ->type('password', '123456')
+                ->press('Login')
+                ->assertPathIs('/home');
+        });
+        $testuser = User::where('email','ss3958@njit.edu')->first();
+       // dd($testuser);
+$testuser->delete();
     }
 }
