@@ -4,6 +4,10 @@ use Illuminate\Http\Request;
 use App\Answer;
 use App\Question;
 use Illuminate\Support\Facades\Auth;
+use App\Notifications\RepliedToQuestion;
+use App\Notifications\UpdatedReplyToQuestion;
+use App\User;
+
 class AnswerController extends Controller
 {
     /**
@@ -52,6 +56,8 @@ class AnswerController extends Controller
         $Answer->user()->associate(Auth::user());
         $Answer->question()->associate($question);
         $Answer->save();
+        $trackQuestion= User::find($question->id);
+        $trackQuestion->notify(new RepliedToQuestion());
         return redirect()->route('question.show',['question_id' => $question->id])->with('message', 'Saved');
     }
     /**
@@ -98,6 +104,8 @@ class AnswerController extends Controller
         $answer = Answer::find($answer);
         $answer->body = $request->body;
         $answer->save();
+        $trackQuestion = User ::find($question);
+        $trackQuestion->notify(new UpdatedReplyToQuestion());
         return redirect()->route('answer.show',['question_id' => $question, 'answer_id' => $answer])->with('message', 'Updated');
 
     }
@@ -113,6 +121,8 @@ class AnswerController extends Controller
 
         $answer = Answer::find($answer);
         $answer->delete();
+        $trackQuestion=User::find($question);
+        $trackQuestion->notify(new DeletedAnswerToQuestion());
         return redirect()->route('question.show',['question_id' => $question])->with('message', 'Delete');
     }
 }
