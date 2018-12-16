@@ -6,7 +6,12 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
-
+use Illuminate\Http\Request;
+use App\Question;
+use Illuminate\Routing\Route;
+use Illuminate\Support\Facades\Auth;
+use App\Answer;
+use App\User;
 class UpdatedReplyToQuestion extends Notification
 {
     use Queueable;
@@ -40,10 +45,15 @@ class UpdatedReplyToQuestion extends Notification
      */
     public function toMail($notifiable)
     {
+        $request = Request::capture();
+        //dd($request);
+        $question_path = $request->path();
+        $question_url = explode("/", $question_path);
+
         return (new MailMessage)
-                    ->line('You have an updated answer for question.')
-                    ->action('View Update', url('/'))
-                    ->line('Thank you for using our application!');
+            ->line("You have an updated answer for question, ".$question_url[1].".")
+            ->action('View updated answer', \route('question.show', $question_url[1]))
+            ->line('Thank you for using our application!');
     }
 
     /**

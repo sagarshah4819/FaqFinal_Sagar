@@ -6,7 +6,12 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
-
+use Illuminate\Http\Request;
+use App\Question;
+use Illuminate\Routing\Route;
+use Illuminate\Support\Facades\Auth;
+use App\Answer;
+use App\User;
 class DeletedAnswerToQuestion extends Notification
 {
     use Queueable;
@@ -40,10 +45,14 @@ class DeletedAnswerToQuestion extends Notification
      */
     public function toMail($notifiable)
     {
+        $request = Request::capture();
+        //dd($request);
+        $question_path = $request->path();
+        $question_url = explode("/", $question_path);
         return (new MailMessage)
-                    ->line('Answer to question has been deleted.')
-                    ->action('View question', url('/'))
-                    ->line('Thank you for using our application!');
+            ->line("Answer to question ".$question_url[1]. "has been deleted.")
+            ->action('Go to question', \route('question.show', $question_url[1]))
+            ->line('Thank you for using our application!');
     }
 
     /**

@@ -6,7 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
-
+use Illuminate\Http\Request;
 class RepliedToQuestion extends Notification
 {
     use Queueable;
@@ -40,10 +40,15 @@ class RepliedToQuestion extends Notification
      */
     public function toMail($notifiable)
     {
+        $request = Request::capture();
+        //dd($request);
+        $question_path = $request->path();
+        $question_url = explode("/", $question_path);
+
         return (new MailMessage)
-                    ->line("You have a new answer to your question")
-                    ->action('View answer', url('/'))
-                    ->line('Thank you for using our application!');
+            ->line("You have a new answer to your question, ".$question_url[1].".")
+            ->action('View answer', \route('question.show', $question_url[1]))
+            ->line('Thank you for using our application!');
     }
 
     /**
