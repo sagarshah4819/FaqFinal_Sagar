@@ -26,4 +26,19 @@ class RegistrationDuskTest extends DuskTestCase
                 ->click('button[type="submit"]');
         });
     }
+    public function testUserLogin()
+    {
+        $this->browse(function (Browser $browser) {
+            $browser->visit('http://localhost:8000')
+                ->assertTitle('Laravel')
+                ->clickLink('Login')
+                ->value('#email', 'sagarshah4819@gmail.com')
+                ->value('#password', '123456')
+                ->click('button[type="submit"]')
+                ->assertSee('Questions')
+                ->click('#navbarDropdown')
+                ->clickLink('Logout')
+                ->assertSee('Laravel');
+        });
+    }
 }
