@@ -6,6 +6,7 @@ use App\Question;
 use Illuminate\Support\Facades\Auth;
 use App\Notifications\RepliedToQuestion;
 use App\Notifications\UpdatedReplyToQuestion;
+use App\Notifications\DeletedAnswerToQuestion;
 use App\User;
 
 class AnswerController extends Controller
