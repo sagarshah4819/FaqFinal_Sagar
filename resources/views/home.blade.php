@@ -28,6 +28,7 @@
                                                     <a class="btn btn-primary float-right" href="{{ route('question.show', ['id' => $question->id]) }}">
                                                         View
                                                     </a>
+                                                <p class="card-text">{{$question->user_id}}</p>
                                                 </p>
                                             </div>
                                         </div>
